@@ -12,20 +12,20 @@ public class SparkReadMysql {
 	public static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(SparkReadMysql.class);
 
 	public static void main(String[] args) {
-		JavaSparkContext sparkContext = new JavaSparkContext( new SparkConf().setAppName("SparkReadMysql").setMaster("local[5]"));
+		JavaSparkContext sparkContext = new JavaSparkContext( new SparkConf().setAppName("SparkReadMysql").setMaster("spark://150.0.2.44:7077"));
 		SQLContext sqlContext = new SQLContext(sparkContext);
 		// 读取mysql数据
-		readMySQL(sqlContext);
+		readMySQL(sqlContext, args[0]);
 
 		// 停止SparkContext
 		sparkContext.stop();
 	}
 
-	private static void readMySQL(SQLContext sqlContext) {
+	private static void readMySQL(SQLContext sqlContext, String table) {
 		// jdbc.url=jdbc:mysql://localhost:3306/database
-		String url = "jdbc:mysql://localhost:3306/test";
+		String url = "jdbc:mysql://150.0.32.36:3306/test";
 		// 查找的表名
-		String table = "user_test";
+//		String table = "user_test";
 		// 增加数据库的用户名(user)密码(password),指定test数据库的驱动(driver)
 		Properties connectionProperties = new Properties();
 		connectionProperties.put("user", "root");

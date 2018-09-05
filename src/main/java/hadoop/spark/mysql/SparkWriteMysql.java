@@ -9,6 +9,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.RowFactory;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
 
 import java.util.ArrayList;
@@ -28,12 +29,12 @@ public class SparkWriteMysql {
     public static org.apache.log4j.Logger logger = org.apache.log4j.Logger.getLogger(SparkWriteMysql.class);
 
     public static void main(String[] args) {
-        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("SparkMysql").setMaster("local[5]"));
+        JavaSparkContext sparkContext = new JavaSparkContext(new SparkConf().setAppName("SparkMysql").setMaster("spark://150.0.2.44:7077"));
         SQLContext sqlContext = new SQLContext(sparkContext);
         //写入的数据内容
         JavaRDD<String> personData = sparkContext.parallelize(Arrays.asList("1 tom 5","2 jack 6","3 alex 7"));
         //数据库内容
-        String url = "jdbc:mysql://localhost:3306/test";
+        String url = "jdbc:mysql://150.0.32.36:3306/test";
         Properties connectionProperties = new Properties();
         connectionProperties.put("user","root");
         connectionProperties.put("password","wenyuguang");
@@ -43,7 +44,13 @@ public class SparkWriteMysql {
          */
         //将RDD变成以Row为类型的RDD。Row可以简单理解为Table的一行数据
         JavaRDD<Row> personsRDD = personData.map(new Function<String,Row>(){
-            public Row call(String line) throws Exception {
+            /**
+			 * 2018年9月5日下午3:10:21
+			 * Tony
+			 */
+			private static final long serialVersionUID = 1L;
+
+			public Row call(String line) throws Exception {
                 String[] splited = line.split(" ");
                 return RowFactory.create(Integer.valueOf(splited[0]),splited[1],Integer.valueOf(splited[2]));
             }
@@ -52,7 +59,7 @@ public class SparkWriteMysql {
         /**
          * 第二步：动态构造DataFrame的元数据。
          */
-        List structFields = new ArrayList();
+        List<StructField> structFields = new ArrayList<StructField>();
         structFields.add(DataTypes.createStructField("id",DataTypes.IntegerType,true));
         structFields.add(DataTypes.createStructField("name",DataTypes.StringType,true));
         structFields.add(DataTypes.createStructField("age",DataTypes.IntegerType,true));

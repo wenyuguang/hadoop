@@ -18,7 +18,6 @@ import java.util.Iterator;
  * @version V1.0
  * @Title: ${file_name}
  * @Package ${package_name}
- * @Description: TODO
  * @date ${date} ${time}
  * 案例需求：
 
@@ -36,28 +35,50 @@ import java.util.Iterator;
  */
 public class SortWordCount {
     public static void main(String[] args) throws Exception {
-        SparkConf conf = new SparkConf().setAppName("spark学习").setMaster("spark://10.1.89.50:7077");
+        SparkConf conf = new SparkConf().setAppName("spark学习").setMaster("spark://150.0.2.44:7077");
         JavaSparkContext sc = new JavaSparkContext(conf);
-        // 创建lines RDD
-        JavaRDD<String> lines = sc.textFile("hdfs://10.1.89.50:9000/log/nginxlog/log.log");
+        // 创建lines RDD  "hdfs://150.0.2.44:9000/log/nginxlog/log.log"
+        JavaRDD<String> lines = sc.textFile(args[0]);
 
         // 将文本分割成单词RDD
         JavaRDD<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
-            @Override
+            /**
+			 * 2018年9月5日下午3:14:43
+			 * Tony
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public Iterator<String> call(String s) throws Exception {
-                return Arrays.asList(s.split(" ")).iterator();
+				try {
+					return Arrays.asList(s.substring(0, s.indexOf(" - - "))).iterator();
+				} catch (Exception e) {
+					return Arrays.asList("").iterator();
+				}
             }
         });
         //将单词RDD转换为（单词，1）键值对RDD
         JavaPairRDD<String,Integer> wordPair = words.mapToPair(new PairFunction<String, String,Integer>() {
-            @Override
+            /**
+			 * 2018年9月5日下午3:51:40
+			 * Tony
+			 */
+			private static final long serialVersionUID = 6286697388486515898L;
+
+			@Override
             public Tuple2<String,Integer> call(String s) throws Exception {
                 return new Tuple2<String,Integer>(s,1);
             }
         });
         //对wordPair 进行按键计数
         JavaPairRDD<String,Integer> wordCount = wordPair.reduceByKey(new Function2<Integer, Integer, Integer>() {
-            @Override
+            /**
+			 * 2018年9月5日下午3:14:39
+			 * Tony
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public Integer call(Integer integer, Integer integer2) throws Exception {
                 return integer +integer2;
             }
@@ -69,7 +90,13 @@ public class SortWordCount {
 
         // 进行key-value的反转映射
         JavaPairRDD<Integer,String> countWord = wordCount.mapToPair(new PairFunction<Tuple2<String, Integer>, Integer, String>() {
-            @Override
+            /**
+			 * 2018年9月5日下午3:14:35
+			 * Tony
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public Tuple2<Integer, String> call(Tuple2<String, Integer> s) throws Exception {
                 return new Tuple2<Integer, String>(s._2,s._1);
             }
@@ -78,7 +105,13 @@ public class SortWordCount {
         JavaPairRDD<Integer, String> sortedCountWords = countWord.sortByKey(false);
         // 再次将value-key进行反转映射
         JavaPairRDD<String,Integer> sortedWordCount = sortedCountWords.mapToPair(new PairFunction<Tuple2<Integer, String>, String, Integer>() {
-            @Override
+            /**
+			 * 2018年9月5日下午3:14:28
+			 * Tony
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public Tuple2<String, Integer> call(Tuple2<Integer, String> s) throws Exception {
                 return new Tuple2<String, Integer>(s._2,s._1);
             }
@@ -86,12 +119,18 @@ public class SortWordCount {
         // 到此为止，我们获得了按照单词出现次数排序后的单词计数
         // 打印出来
         sortedWordCount.foreach(new VoidFunction<Tuple2<String, Integer>>() {
-            @Override
+            /**
+			 * 2018年9月5日下午3:14:22
+			 * Tony
+			 */
+			private static final long serialVersionUID = 1L;
+
+			@Override
             public void call(Tuple2<String, Integer> s) throws Exception {
                 System.out.println("word \""+s._1+"\" appears "+ s._2+" times.");
             }
         });
-        sortedWordCount.saveAsTextFile(args[0]);
+        sortedWordCount.saveAsTextFile(args[1]);
         sc.close();
     }
 }

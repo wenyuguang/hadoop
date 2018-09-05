@@ -20,5 +20,6 @@ public class Test {
         String url = other1.substring(other1.indexOf(" "), other1.indexOf("HTTP/1.1"));
         String status = line.split("HTTP/1.1\" ")[1].substring(0,3);
         String clientType = line.split("\"-\" \"")[1].replace("\" \"-\"", "");
+        System.out.println(line.substring(0, line.indexOf(" - - ")));
     }
 }
