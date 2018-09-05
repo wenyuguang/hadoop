@@ -1,18 +1,31 @@
 package hadoop.spark.nginx;
 
-import java.util.regex.Pattern;
 
-public class ApacheAccessLogq {
+public class ApacheAccessLog {
 
 	private String ipAddress;
 	private String clientIdentd;
-	private String userId;
 	private String dateTime;
 	private String method;
 	private String endpoint;
 	private String protocol;
 	private String responseCode;
 	private String contentSize;
+
+    public ApacheAccessLog(){
+
+    }
+	public ApacheAccessLog(String ipAddress, String dateTime, String method, String endpoint, String protocol, String responseCode, String contentSize, String clientIdentd) {
+		this.ipAddress = ipAddress;
+		this.dateTime = dateTime;
+		this.method = method;
+		this.endpoint = endpoint;
+		this.protocol = protocol;
+		this.responseCode = responseCode;
+		this.contentSize = contentSize;
+		this.clientIdentd = clientIdentd;
+	}
+
 	/**
 	 * get ipAddress value
 	 * @return the ipAddress
@@ -40,20 +53,6 @@ public class ApacheAccessLogq {
 	 */
 	public void setClientIdentd(String clientIdentd) {
 		this.clientIdentd = clientIdentd;
-	}
-	/**
-	 * get userId value
-	 * @return the userId
-	 */
-	public String getUserId() {
-		return userId;
-	}
-	/**
-	 * set userId value
-	 * @param userId the userId to set
-	 */
-	public void setUserId(String userId) {
-		this.userId = userId;
 	}
 	/**
 	 * get dateTime value
@@ -144,7 +143,7 @@ public class ApacheAccessLogq {
 	 */
 	@Override
 	public String toString() {
-		return "ApacheAccessLog [ipAddress=" + ipAddress + ", clientIdentd=" + clientIdentd + ", userId=" + userId
+		return "ApacheAccessLog [ipAddress=" + ipAddress + ", clientIdentd=" + clientIdentd
 				+ ", dateTime=" + dateTime + ", method=" + method + ", endpoint=" + endpoint + ", protocol=" + protocol
 				+ ", responseCode=" + responseCode + ", contentSize=" + contentSize + "]";
 	}

@@ -35,7 +35,7 @@ import java.util.Iterator;
  */
 public class SortWordCount {
     public static void main(String[] args) throws Exception {
-        SparkConf conf = new SparkConf().setAppName("spark学习").setMaster("spark://150.0.2.44:7077");
+        SparkConf conf = new SparkConf().setAppName("spark学习").setMaster("spark://127.0.0.1:7077");
         JavaSparkContext sc = new JavaSparkContext(conf);
         // 创建lines RDD  "hdfs://150.0.2.44:9000/log/nginxlog/log.log"
         JavaRDD<String> lines = sc.textFile(args[0]);
