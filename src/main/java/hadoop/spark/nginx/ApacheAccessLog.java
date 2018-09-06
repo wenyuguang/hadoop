@@ -9,14 +9,14 @@ public class ApacheAccessLog implements Serializable{
 	 * Tony
 	 */
 	private static final long serialVersionUID = -5778256620691589797L;
-	private String ipAddress;
-	private String clientIdentd;
-	private String dateTime;
-	private String method;
-	private String endpoint;
-	private String protocol;
-	private String responseCode;
-	private String contentSize;
+	public String ipAddress;
+	public String clientIdentd;
+	public String dateTime;
+	public String method;
+	public String endpoint;
+	public String protocol;
+	public String responseCode;
+	public String contentSize;
 
     public ApacheAccessLog(){
 

@@ -11,7 +11,7 @@ package hadoop.hadoop;
 public class Test {
 
     public static void main(String[] args) {
-        String line = "150.37.147.4 - - [04/Aug/2018:02:56:40 +0800] \"GET /api/service-pingshan/getAjxx?ajbs=310300000005376&ajlx=33&accessToken=d0c5787b04ae11e8bc93000ec6cba075 HTTP/1.1\" 404 139 \"-\" \"Jakarta Commons-HttpClient/3.1\" \"-\"";
+        String line = "192.1.129.6 - - [09/Aug/2018:02:30:02 +0800] \"GET /api/service-dy/getFile/c3R3al8zMDAxMDAwMDEwMjk0NTVfMjAwMDU1 HTTP/1.1\" 200 567979 \"-\" \"Java/1.7.0_45\" \"-\"";
         String ip = line.split(" - - ")[0];
         String other = line.split(" - - ")[1];
         String time = other.split("0800]")[0].substring(1, other.split("0800]")[0].indexOf(" "));
@@ -21,5 +21,9 @@ public class Test {
         String status = line.split("HTTP/1.1\" ")[1].substring(0,3);
         String clientType = line.split("\"-\" \"")[1].replace("\" \"-\"", "");
         System.out.println(line.substring(0, line.indexOf(" - - ")));
+        String lines = "192.1.129.6 - - [09/Aug/2018:02:30:02 +0800] \"GET /api/service-dy/getFile/c3R3al8zMDAxMDAwMDEwMjk0NTVfMjAwMDU1 HTTP/1.1\" 200 567979 \"-\" \"Java/1.7.0_45\" \"-\"";
+        String[] spilt = lines.split(" ");
+        System.out.println(spilt);
+        System.out.println(spilt.length);
     }
 }

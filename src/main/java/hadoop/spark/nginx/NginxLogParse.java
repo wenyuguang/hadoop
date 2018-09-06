@@ -1,5 +1,8 @@
 package hadoop.spark.nginx;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -8,16 +11,19 @@ import org.apache.spark.api.java.function.VoidFunction;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
+import org.apache.spark.sql.types.DataTypes;
+import org.apache.spark.sql.types.StructField;
+import org.apache.spark.sql.types.StructType;
 
 public class NginxLogParse {
 
 	public static void main(String[] args) {
-		SparkConf conf = new SparkConf().setAppName("nginx日志解析").setMaster("spark://150.0.2.44:7077");
+		SparkConf conf = new SparkConf().setAppName("nginx日志解析").setMaster("local");
         JavaSparkContext sc = new JavaSparkContext(conf);
         SQLContext sqlContext = new SQLContext(sc);
         
         // 创建lines RDD  "hdfs://150.0.2.44:9000/log/nginxlog/log.log"
-        JavaRDD<String> lines = sc.textFile(args[0]);
+        JavaRDD<String> lines = sc.textFile("d://access_log.2018-08-10.log");
         //RDD转DataFrame
         JavaRDD<ApacheAccessLog> apacheAccessLog = lines.map(new Function<String, ApacheAccessLog>() {
         	/**
@@ -29,7 +35,7 @@ public class NginxLogParse {
 			@Override
         	public ApacheAccessLog call(String v1) throws Exception {
 				String[] log = v1.split(" ");
-				if(log.length == 13) {
+				if(log.length == 13||log.length == 12) {
 					String ipAddress = log[0];
 					String dateTime = log[3].replace("[","");
 					String method = log[5].replace("\"","");
@@ -38,7 +44,8 @@ public class NginxLogParse {
 					String responseCode = log[8];
 					String contentSize = log[9];
 					String clientIdentd = log[11].replace("\"","");
-					return new ApacheAccessLog(ipAddress, dateTime, method, endpoint, protocol, responseCode, contentSize, clientIdentd);
+					ApacheAccessLog apacheAccessLog = new ApacheAccessLog(ipAddress, dateTime, method, endpoint, protocol, responseCode, contentSize, clientIdentd);
+					return apacheAccessLog;
 				}
 				return new ApacheAccessLog();
         	}
@@ -55,9 +62,24 @@ public class NginxLogParse {
 			}
 		});
         
+        
+        List<StructField> structFields = new ArrayList<StructField>();
+        structFields.add(DataTypes.createStructField("id",DataTypes.IntegerType,true));
+        structFields.add(DataTypes.createStructField("name",DataTypes.StringType,true));
+        structFields.add(DataTypes.createStructField("age",DataTypes.IntegerType,true));
+
+        //构建StructType，用于最后DataFrame元数据的描述
+        StructType structType = DataTypes.createStructType(structFields);
+
+        
+        
+        
+        
+        
+        
         Dataset<Row> df = sqlContext.createDataFrame(apacheAccessLog, ApacheAccessLog.class);
         df.show();
-        df.registerTempTable("log");
+        df.createOrReplaceTempView("log");
         sqlContext.sql("select * from log").show();
         
         JavaRDD<Row> javaRDD = df.javaRDD();
@@ -94,7 +116,7 @@ public class NginxLogParse {
             }
         });
         
-        map.saveAsTextFile(args[1]);
+//        map.saveAsTextFile(args[1]);
         sc.stop();
         sc.close();
 	}
