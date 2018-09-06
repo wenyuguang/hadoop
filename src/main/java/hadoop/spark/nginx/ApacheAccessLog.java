@@ -1,8 +1,14 @@
 package hadoop.spark.nginx;
 
+import java.io.Serializable;
 
-public class ApacheAccessLog {
+public class ApacheAccessLog implements Serializable{
 
+	/**
+	 * 2018年9月6日下午4:21:46
+	 * Tony
+	 */
+	private static final long serialVersionUID = -5778256620691589797L;
 	private String ipAddress;
 	private String clientIdentd;
 	private String dateTime;
