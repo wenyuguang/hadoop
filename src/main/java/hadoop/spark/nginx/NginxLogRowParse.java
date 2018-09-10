@@ -23,7 +23,7 @@ public class NginxLogRowParse {
         SQLContext sqlContext = new SQLContext(sc);
         
         // 创建lines RDD  "hdfs://150.0.2.44:9000/log/nginxlog/log.log"
-        JavaRDD<String> lines = sc.textFile("d://access_log.2018-08-10.log");
+        JavaRDD<String> lines = sc.textFile(args[0]);
         /**
          * 第一步：在RDD的基础上创建类型为Row的RDD
          */
